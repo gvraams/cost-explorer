@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  get 'clients/index'
+  get 'projects/index'
+  get 'cost_types/index'
+  get 'costs/index'
+
   root :to => "home#show"
 
   # The priority is based upon order of creation: first created -> highest priority.
