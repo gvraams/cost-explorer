@@ -1,5 +1,7 @@
 class ClientsController < ApplicationController
   def index
-    return render json: {}
+    @clients = Client.all
+
+    render json: @clients, each_serializer: ClientSerializer
   end
 end

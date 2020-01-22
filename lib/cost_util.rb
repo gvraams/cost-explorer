@@ -1,22 +1,14 @@
 module CostUtil
-  # Eagerly load cost_types to avoid n+1 queries
-  def self.calculate_breakdown(costs_array = [])
-    root_costs = costs_array.select { |cost| cost.cost_type.parent_id.nil? }
-    breakdown = []
+  def self.get_clients_breakdown(clients, projects)
+    client_ids = projects.pluck(:client_id)
+    project_ids = projects.pluck(:id)
 
-    root_costs.each do |root_cost|
-      this_breakdown = self.get_cost_breakdown(costs_array, root_cost)
-      breakdown.push(this_breakdown)
-    end
-
-    return breakdown
-  end
-
-  def self.get_client_breakdown(clients)
     return clients.map do |client|
+      next unless client_ids.include?(client.id)
       breakdown = []
 
       client.projects.each do |project|
+        next unless project_ids.include?(project.id)
         breakdown.push(self.get_project_breakdown(project))
       end
 
@@ -31,9 +23,9 @@ module CostUtil
 
   def self.get_project_breakdown(project)
     costs = project.costs.includes(:cost_type)
-    breakdown = self.calculate_breakdown(costs.to_a)
+    breakdown = self.calculate_breakdown(costs)
 
-    {
+    return {
       id: project.id,
       name: project.title,
       amount: project.amount,
@@ -41,15 +33,13 @@ module CostUtil
     }
   end
 
-  private
-
-  def self.get_cost_breakdown(costs_array, cost)
+  def self.get_cost_breakdown(costs, cost)
     breakdown = []
-    cost.cost_type.children.each do |child_cost_type|
-      sub_costs = costs_array.select { |c| c.cost_type_id == child_cost_type.id }
 
+    cost.cost_type.children.each do |child_cost_type|
+      sub_costs = costs.select { |c| c.cost_type_id == child_cost_type.id }
       sub_costs.map do |sub_cost|
-        breakdown.push(self.get_cost_breakdown(costs_array, sub_cost))
+        breakdown.push(self.get_cost_breakdown(costs, sub_cost))
       end
     end
 
@@ -59,5 +49,19 @@ module CostUtil
       amount: cost.amount,
       breakdown: breakdown,
     }
+  end
+
+  private
+
+  def self.calculate_breakdown(costs)
+    root_costs = costs.select { |cost| cost.cost_type.parent_id.nil? }
+    breakdown = []
+
+    root_costs.each do |root_cost|
+      this_breakdown = self.get_cost_breakdown(costs, root_cost)
+      breakdown.push(this_breakdown)
+    end
+
+    return breakdown
   end
 end

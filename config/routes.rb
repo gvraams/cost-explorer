@@ -1,9 +1,8 @@
 Rails.application.routes.draw do
-  get 'clients/index'
-  get 'projects/index'
-  get 'cost_types/index'
-  get 'costs/index'
-
+  resources :clients, only: [:index]
+  resources :projects, only: [:index]
+  resources :cost_types, only: [:index]
+  resources :costs, only: [:index]
   resources :cost_explorer, path: 'cost-explorer', only: [:index]
 
   root :to => "home#show"
