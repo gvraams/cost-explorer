@@ -18,7 +18,7 @@ module CostUtil
         amount: client.amount,
         breakdown: breakdown,
       }
-    end
+    end.compact
   end
 
   def self.get_project_breakdown(project)
