@@ -46,3 +46,4 @@ group :development do
 end
 
 gem 'ltree_hierarchy'
+gem 'oj'

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200121190236) do
+ActiveRecord::Schema.define(version: 20200121173057) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,13 +27,10 @@ ActiveRecord::Schema.define(version: 20200121190236) do
   add_index "clients", ["id"], name: "index_clients_on_id", using: :btree
 
   create_table "cost_types", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
-    t.string   "name",                                                                             null: false
+    t.string   "name",       null: false
     t.uuid     "parent_id"
-    t.datetime "created_at",                                                                       null: false
-    t.datetime "updated_at",                                                                       null: false
-    t.ltree    "path"
-    t.integer  "secondary_id",        default: "nextval('cost_types_secondary_id_seq'::regclass)", null: false
-    t.integer  "secondary_parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "cost_types", ["id"], name: "index_cost_types_on_id", using: :btree

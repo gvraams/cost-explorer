@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   get 'cost_types/index'
   get 'costs/index'
 
+  resources :cost_explorer, path: 'cost-explorer', only: [:index]
+
   root :to => "home#show"
 
   # The priority is based upon order of creation: first created -> highest priority.
