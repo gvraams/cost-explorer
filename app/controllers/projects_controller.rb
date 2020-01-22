@@ -1,5 +1,7 @@
 class ProjectsController < ApplicationController
   def index
-    return render json: {}
+    @projects = Project.all
+
+    render json: @projects, each_serializer: ProjectSerializer
   end
 end
