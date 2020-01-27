@@ -3,6 +3,6 @@ class Project < ActiveRecord::Base
   has_many :costs
 
   def amount
-    self.costs.joins(:cost_type).where("cost_types.parent_id IS NULL").sum(:amount)
+    self.costs.roots.sum(:amount)
   end
 end
